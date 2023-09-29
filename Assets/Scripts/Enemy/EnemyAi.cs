@@ -10,13 +10,21 @@ public class EnemyAi : MonoBehaviour
     public Transform[] diemden;
     private int diempointhenai;
     public float speed;
-    Vector3 target;
+    Vector3 kc = new Vector3(1, 1, 1);
     float distance;
-    public bool dcphepdichuyendenpoint ;
+    public Transform diembandan;
+    public GameObject bulletprefabs;
+    public float timedelay;
 
-    //public Transform player;
+
+    public bool dcphepdichuyendenpoint;
+
     bool Isfollow;
-    //Vector3 phamvitancong=
+    float phamvitancong = 5f;
+    //float enemy_stop=2f
+    public Transform player;
+    bool dangtancong;
+
 
 
     private void Start()
@@ -25,31 +33,102 @@ public class EnemyAi : MonoBehaviour
         diempointhenai = 0;
         dichuyenwaypoint();
         dcphepdichuyendenpoint = true;
-      
 
-}
+
+    }
     private void Update()
     {
-        if (dcphepdichuyendenpoint) 
+
+        GameObject player = GameObject.FindWithTag("player");
+        if (player == null)
         {
             if (!agent.pathPending && agent.remainingDistance < 0.1f)
             {
-
                 dichuyenwaypoint();
             }
+            return;
         }
-       
+
+        float khoangcachbancuaenemy = Vector3.Distance(transform.position, player.transform.position);
+
+        if (!dangtancong && khoangcachbancuaenemy > phamvitancong)
+        {
+            dichuyenwaypoint();
+        }
+
+        if (dangtancong && khoangcachbancuaenemy > phamvitancong)
+        {
+            if (agent.isStopped == true)
+            {
+                agent.isStopped = false;
+            }
+            duoitheoplayer();
+
+        }
+        if (khoangcachbancuaenemy <= phamvitancong)
+        {
+            isAttacking();
+
+        }
+    }
+    float countTime;
+    void isAttacking()
+    {
+
+        if (countTime >= timedelay)
+        {
+            GameObject bullet = Instantiate(bulletprefabs, diembandan.position, diembandan.rotation);
+
+
+            bullet bulletComponent = bullet.GetComponent<bullet>();
+            if (bulletComponent != null)
+            {
+
+                bulletComponent.speed = 20f;
+            }
+            countTime = 0;
+        }
+
+        countTime += Time.deltaTime;
+
+        dangtancong = true;
+        if (dangtancong)
+        {
+            agent.isStopped = true;
+        }
+    }
+    void duoitheoplayer()
+    {
+        if (player != null)
+        {
+            agent.SetDestination(player.position);
+        }
+
 
     }
+    //void banplayer()
+    //{
+
+    //}
 
 
     void dichuyenwaypoint()
     {
-        agent.SetDestination(diemden[diempointhenai].position);
+        float diempoint = Vector3.Distance(transform.position, diemden[diempointhenai].position);
+        if (dcphepdichuyendenpoint)
+        {
 
-        diempointhenai++;
-        if (diempointhenai >= diemden.Length)
-            diempointhenai = 0;
+
+            agent.SetDestination(diemden[diempointhenai].position);
+            if (diempoint < 1)
+            {   
+
+                diempointhenai++;
+                if (diempointhenai >= diemden.Length)
+                    diempointhenai = 0;
+            }
+
+        }
 
     }
     void tangIndex()
@@ -57,5 +136,5 @@ public class EnemyAi : MonoBehaviour
         diempointhenai++;
         if (diempointhenai >= diemden.Length)
             diempointhenai = 0;
-    }   
+    }
 }

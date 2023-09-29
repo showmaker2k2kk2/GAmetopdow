@@ -4,23 +4,28 @@ using UnityEngine;
 
 public class Tu_ban : MonoBehaviour
 {
-    public Transform vitriban;
+    public GameObject bulletPrefab;
+    public Transform firePoint;
 
-    public GameObject dan;
-    public float tocdodan;
-
-    void Start()
-    {
-        dan = GetComponent<GameObject>();
-    }
-
-    // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Shoot();
+        }
     }
-    void bandan()
+
+    void Shoot()
     {
-       
-    }    
+
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+
+        bullet bulletComponent = bullet.GetComponent<bullet>();
+        if (bulletComponent != null)
+        {
+
+            bulletComponent.speed = 20f;
+        }
+    }
 }

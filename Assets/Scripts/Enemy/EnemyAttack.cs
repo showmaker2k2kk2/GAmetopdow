@@ -7,9 +7,9 @@ public class EnemyAttack : MonoBehaviour
 {
     public float phamvitancong = 5f;
     NavMeshAgent agent;
-    Transform player;
+   public Transform player;
     Vector3 kc=new Vector3(2,2,2);
-    EnemyAi ai;
+  
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -22,7 +22,7 @@ public class EnemyAttack : MonoBehaviour
             float khoangcachbancuaenemy = Vector3.Distance(transform.position, player.transform.position);
             if (khoangcachbancuaenemy < phamvitancong)
             {
-                ai.
+               
                 enemishoot();
                 duoitheoplayer();
             }
@@ -36,6 +36,10 @@ public class EnemyAttack : MonoBehaviour
     }
     void duoitheoplayer()
     {
-        transform.position=transform.position+kc;
+        if(player!=null) 
+        {
+            agent.SetDestination(player.position);
+        }
+       
     }
 }
